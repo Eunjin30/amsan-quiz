@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>번개 암산 탐험대! 세 자리 수 10문제 챌린지</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Jua & Noto Sans KR -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            title: ['Jua', 'sans-serif'],
+            sans: ['Noto Sans KR', 'sans-serif'],
+          },
+          colors: {
+            math: {
+              navy: '#0F172A',
+              indigo: '#4338CA',
+              blue: '#2563EB',
+              cyan: '#06B6D4',
+              mint: '#10B981',
+              amber: '#F59E0B',
+              rose: '#F43F5E',
+              purple: '#7C3AED'
+            }
+          },
+          keyframes: {
+            gentleBounce: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-6px)' }
+            },
+            shake: {
+              '0%, 100%': { transform: 'translateX(0)' },
+              '20%, 60%': { transform: 'translateX(-7px)' },
+              '40%, 80%': { transform: 'translateX(7px)' }
+            },
+            popScale: {
+              '0%': { transform: 'scale(0.9)', opacity: '0' },
+              '100%': { transform: 'scale(1)', opacity: '1' }
+            },
+            glowPulse: {
+              '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+              '50%': { opacity: '0.8', transform: 'scale(1.05)' }
+            }
+          },
+          animation: {
+            gentleBounce: 'gentleBounce 2s infinite ease-in-out',
+            shake: 'shake 0.35s ease-in-out',
+            popScale: 'popScale 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+            glowPulse: 'glowPulse 1.8s infinite ease-in-out'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .font-title {
+      font-family: 'Jua', sans-serif;
+    }
+    input {
+      user-select: auto;
+    }
+    /* 스크롤바 미려한 스타일 */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 min-h-screen text-slate-100 flex flex-col justify-between items-center p-3 md:p-6">
+
+  <header class="w-full max-w-2xl flex items-center justify-between py-2 md:py-3 px-1">
+    <div class="flex items-center gap-2.5">
+      <div class="w-11 h-11 bg-gradient-to-tr from-cyan-500 to-indigo-600 rounded-2xl shadow-lg border-2 border-cyan-400 flex items-center justify-center text-2xl animate-gentleBounce text-white">
+        ⚡
+      </div>
+      <div>
+        <h1 class="font-title text-2xl md:text-3xl text-white tracking-wide flex items-center gap-1.5 drop-shadow">
+          번개 암산 <span class="text-cyan-400">탐험대</span>
+        </h1>
+        <p class="text-[11px] md:text-xs text-indigo-200 font-bold">세 자리 수 받아올림·받아내림 10문제 도전!</p>
+      </div>
+    </div>
+
+    <!-- 헤더 우측 컨트롤 (성공 목표 배지 + 꿀팁 모달 + 소리 토글) -->
+    <div class="flex items-center gap-2">
+      <button id="headerTipBtn" class="bg-indigo-900/80 hover:bg-indigo-800 text-amber-300 border border-indigo-700 px-3 py-1.5 rounded-2xl shadow text-xs font-bold flex items-center gap-1 transition active:scale-95" title="암산 꿀팁 보기">
+        <span>💡</span> <span class="hidden sm:inline">암산 비법</span>
+      </button>
+      <div class="bg-slate-800/90 border border-indigo-500/50 px-3 py-1.5 rounded-2xl shadow text-xs font-bold text-slate-200 flex items-center gap-1.5">
+        <span>달성:</span>
+        <span id="headerScoreBadge" class="text-cyan-400 font-black text-sm">0 / 10</span>
+      </div>
+      <button id="soundToggleBtn" class="bg-slate-800/90 border border-indigo-500/50 text-slate-200 p-2 rounded-2xl shadow hover:bg-slate-700 active:scale-95 transition text-sm" title="소리 켜기/끄기">
+        <span id="soundIcon">🔊</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="w-full max-w-2xl flex-1 flex flex-col justify-center my-2">
+
+    <!-- 1. 시작 화면 (Start Screen) -->
+    <section id="startScreen" class="bg-slate-800/90 backdrop-blur-xl rounded-3xl p-6 md:p-8 shadow-2xl border-2 border-indigo-500/40 flex flex-col items-center text-center animate-popScale">
+      <div class="w-24 h-24 bg-gradient-to-tr from-cyan-400 via-indigo-500 to-purple-600 rounded-3xl flex items-center justify-center text-5xl mb-4 shadow-xl shadow-cyan-500/20 text-white animate-gentleBounce">
+        🧮
+      </div>
+
+      <span class="bg-indigo-950/80 text-cyan-300 text-xs md:text-sm font-extrabold px-3.5 py-1 rounded-full mb-2 border border-cyan-500/30">
+        초등 4~6학년 수학 교과 연계 • 수 감각 & 암산 훈련
+      </span>
+      <h2 class="font-title text-3xl md:text-4xl text-white mb-2 tracking-wide">
+        세 자리 수 암산 10문제 챌린지! 🔥
+      </h2>
+      <p class="text-slate-300 text-sm md:text-base max-w-md mb-6 leading-relaxed">
+        반드시 <strong class="text-amber-400">받아올림</strong>이 있는 덧셈과 <strong class="text-cyan-400">받아내림</strong>이 있는 뺄셈 문제가 출제됩니다.<br>
+        종이와 연필 없이 머릿속으로 번개처럼 계산해 보세요!<br>
+        총 <strong class="text-emerald-400">10문제를 맞히면</strong> 암산 마스터 인증서를 획득합니다!
+      </p>
+
+      <!-- 퀴즈 특징 3단 카드 -->
+      <div class="grid grid-cols-3 gap-2.5 w-full max-w-md mb-6 text-left">
+        <div class="bg-slate-900/80 border border-indigo-500/30 rounded-2xl p-3 text-center">
+          <div class="text-xl mb-1">➕</div>
+          <div class="font-bold text-xs text-indigo-300">받아올림 덧셈</div>
+          <div class="text-[11px] text-slate-400 mt-0.5">1회 이상 올림</div>
+        </div>
+        <div class="bg-slate-900/80 border border-indigo-500/30 rounded-2xl p-3 text-center">
+          <div class="text-xl mb-1">➖</div>
+          <div class="font-bold text-xs text-cyan-300">받아내림 뺄셈</div>
+          <div class="text-[11px] text-slate-400 mt-0.5">1회 이상 내림</div>
+        </div>
+        <div class="bg-slate-900/80 border border-indigo-500/30 rounded-2xl p-3 text-center">
+          <div class="text-xl mb-1">🏆</div>
+          <div class="font-bold text-xs text-amber-300">10문제 달성</div>
+          <div class="text-[11px] text-slate-400 mt-0.5">상세 성적표 제공</div>
+        </div>
+      </div>
+
+      <!-- 탐험가 아바타 선택 -->
+      <div class="w-full max-w-md mb-6">
+        <label class="block text-xs md:text-sm font-bold text-slate-300 mb-2">나의 암산 탐험가 캐릭터</label>
+        <div class="grid grid-cols-4 gap-2.5" id="avatarSelector">
+          <button type="button" data-avatar="⚡" class="avatar-btn p-3 text-3xl rounded-2xl border-2 border-cyan-400 bg-cyan-950/60 shadow-md transition transform hover:scale-105 active:scale-95">⚡</button>
+          <button type="button" data-avatar="🧙‍♂️" class="avatar-btn p-3 text-3xl rounded-2xl border-2 border-slate-700 bg-slate-900/60 transition transform hover:scale-105 active:scale-95">🧙‍♂️</button>
+          <button type="button" data-avatar="🤖" class="avatar-btn p-3 text-3xl rounded-2xl border-2 border-slate-700 bg-slate-900/60 transition transform hover:scale-105 active:scale-95">🤖</button>
+          <button type="button" data-avatar="🦉" class="avatar-btn p-3 text-3xl rounded-2xl border-2 border-slate-700 bg-slate-900/60 transition transform hover:scale-105 active:scale-95">🦉</button>
+        </div>
+      </div>
+
+      <!-- 도전 시작 버튼 -->
+      <button id="startChallengeBtn" class="w-full max-w-md bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-title text-2xl py-4 rounded-2xl shadow-xl shadow-cyan-500/25 transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
+        <span>번개 암산 챌린지 시작!</span>
+        <span>🚀</span>
+      </button>
+    </section>
+
+    <!-- 2. 퀴즈 진행 화면 (Quiz Arena) -->
+    <section id="quizScreen" class="hidden bg-slate-800/90 backdrop-blur-xl rounded-3xl p-4 md:p-6 shadow-2xl border-2 border-indigo-500/40 flex flex-col animate-popScale">
+
+      <!-- 상단 현황판: 10문제 구슬 게이지 & 타이머 -->
+      <div class="bg-slate-900/90 rounded-2xl p-3.5 mb-3 border border-indigo-500/30 shadow-inner">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span id="playerAvatar" class="text-2xl">⚡</span>
+            <span class="font-title text-base md:text-lg text-white">
+              맞힌 정답: <span id="currentScoreNum" class="text-cyan-400 text-xl font-black">0</span> / 10
+            </span>
+          </div>
+          <div class="flex items-center gap-3">
+            <!-- 문제당 타이머 -->
+            <div class="bg-indigo-950/70 border border-indigo-600/40 text-indigo-200 text-xs font-bold px-2.5 py-1 rounded-xl flex items-center gap-1">
+              <span>⏱️ 문제:</span>
+              <span id="questionTimerText" class="font-mono text-cyan-300">0.0초</span>
+            </div>
+            <!-- 누적 타이머 -->
+            <div class="bg-slate-800 text-slate-300 text-xs font-bold px-2.5 py-1 rounded-xl border border-slate-700 hidden sm:flex items-center gap-1">
+              <span>총 누적:</span>
+              <span id="totalTimerText" class="font-mono text-amber-300">00:00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 10단계 인디케이터 구슬 -->
+        <div class="grid grid-cols-10 gap-1 md:gap-1.5 pt-1" id="scoreNodesContainer">
+          <!-- 1~10 구슬 JS로 렌더링 -->
+        </div>
+
+        <!-- 프로그레스 바 -->
+        <div class="w-full bg-slate-800 rounded-full h-2 mt-2.5 overflow-hidden">
+          <div id="quizProgressBar" class="bg-gradient-to-r from-cyan-400 via-indigo-500 to-emerald-400 h-2 rounded-full transition-all duration-300 w-0"></div>
+        </div>
+      </div>
+
+      <!-- 문제 연산 카드 영역 -->
+      <div class="bg-gradient-to-b from-indigo-950/70 to-slate-900/90 border-2 border-indigo-500/40 rounded-2xl p-4 md:p-6 mb-3 text-center flex flex-col items-center relative shadow-lg">
+        
+        <!-- 연산 유형 배지 & 자리수 정보 -->
+        <div class="w-full flex items-center justify-between mb-3 px-1">
+          <span id="operationBadge" class="bg-emerald-500/20 text-emerald-300 text-xs font-extrabold px-3 py-1 rounded-full border border-emerald-400/30 flex items-center gap-1">
+            <span>➕</span> <span>받아올림 덧셈</span>
+          </span>
+          <span id="carryingInfoBadge" class="bg-amber-500/20 text-amber-300 text-xs font-bold px-3 py-1 rounded-full border border-amber-400/30">
+            일의 자리 받아올림
+          </span>
+        </div>
+
+        <!-- 대형 수식 표시 영역 -->
+        <div class="py-3 w-full flex items-center justify-center gap-2 md:gap-4 my-1">
+          <div class="font-title text-3xl sm:text-4xl md:text-5xl tracking-wider text-white drop-shadow flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
+            <span id="numA" class="text-cyan-300 font-mono">587</span>
+            <span id="operatorSign" class="text-amber-400 font-black">+</span>
+            <span id="numB" class="text-cyan-300 font-mono">265</span>
+            <span class="text-slate-400">=</span>
+            <!-- 수식 내 정답 입력 박스 -->
+            <span class="inline-flex items-center min-w-[120px] sm:min-w-[150px] justify-center bg-slate-950 border-2 border-cyan-400 rounded-2xl px-3 py-1 text-emerald-400 font-mono shadow-inner shadow-cyan-900/50">
+              <span id="displayAnswer">?</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- 힌트 및 암산 팁 바로보기 버튼 -->
+        <div class="mt-2 flex items-center justify-center gap-2">
+          <button id="showClueTipBtn" type="button" class="text-xs text-amber-300 bg-amber-950/50 hover:bg-amber-900/60 font-bold px-3.5 py-1.5 rounded-full transition active:scale-95 flex items-center gap-1.5 border border-amber-500/40 shadow-sm">
+            💡 <span>이 문제 암산 꿀팁 보기</span>
+          </button>
+        </div>
+
+        <!-- 연상 힌트 안내 상자 -->
+        <div id="clueTipBox" class="hidden mt-2.5 text-xs md:text-sm text-slate-200 bg-slate-900/90 border border-amber-400/40 px-4 py-2.5 rounded-xl text-left leading-relaxed w-full animate-popScale">
+          💡 <span id="clueTipText" class="font-medium text-amber-200">백의 자리(500+200=700)부터 먼저 묶어서 계산해보세요!</span>
+        </div>
+      </div>
+
+      <!-- 가상 숫자 키패드 (태블릿/모바일 최적화 & PC 엔터 지원) -->
+      <div class="w-full bg-slate-900/80 rounded-2xl p-3 border border-indigo-500/30 flex flex-col gap-2">
+        
+        <!-- 실시간 입력 상태 & 액션바 -->
+        <div class="flex items-center justify-between px-1 text-xs text-slate-400">
+          <span>키패드 터치 또는 키보드 숫자 입력</span>
+          <span class="text-cyan-300 font-bold">Enter 키로 즉시 제출</span>
+        </div>
+
+        <!-- 4x3 키패드 그리드 -->
+        <div class="grid grid-cols-3 gap-2">
+          <button type="button" class="numpad-btn bg-slate-800 hover:bg-indigo-600/50 active:bg-cyan-600 border border-slate-700 hover:border-cyan-400 text-white font-title text-2xl py-3 rounded-xl transition shadow active:scale-95" data-val="1">1</button>
+          <button type="button" class="numpad-btn bg-slate-800 hover:bg-indigo-600/50 active:bg-cyan-600 border border-slate-700 hover:border-cyan-400 text-white font-title text-2xl py-3 rounded-xl transition shadow active:scale-95" data-val="2">2</button>
+          <button type="button" class="numpad-btn bg-slate-800 hover:bg-indigo-600/50 active:bg-cyan-600 border border-slate-700 hover:border-cyan-400 text-white font-title text-2xl py-3 rounded-xl transition shadow active:scale-95" data-val="3">3</button>
+
+          <button type="button" class="numpad-btn bg-slate-800 hover:bg-indigo-600/50 active:bg-cyan-600 border border-slate-700 hover:border-cyan-400 text-white font-title text-2xl py-3 rounded-xl transition shadow active:scale-95" data-val="4">4</button>
+          <button type="button" class="numpad-btn bg-slate-800 hover:bg-indigo-600/50 active:bg-cyan-600 border border-slate-700 hover:border-cyan-400 text-white font-title text-2xl py-3 rounded-xl transition shadow active:scale-95" data-val="5">5</button>
+          <button type="button" class="numpad-btn bg-slate-800 hover:bg-indigo-600/50 active:bg-cyan-600 border border-slate-700 hover:border-cyan-400 text-white font-title text-2xl py-3 rounded-xl transition shadow active:scale-95" data-val="6">6</button>
+
+          <button type="button" class="numpad-btn bg-slate-800 hover:bg-indigo-600/50 active:bg-cyan-600 border border-slate-700 hover:border-cyan-400 text-white font-title text-2xl py-3 rounded-xl transition shadow active:scale-95" data-val="7">7</button>
+          <button type="button" class="numpad-btn bg-slate-800 hover:bg-indigo-600/50 active:bg-cyan-600 border border-slate-700 hover:border-cyan-400 text-white font-title text-2xl py-3 rounded-xl transition shadow active:scale-95" data-val="8">8</button>
+          <button type="button" class="numpad-btn bg-slate-800 hover:bg-indigo-600/50 active:bg-cyan-600 border border-slate-700 hover:border-cyan-400 text-white font-title text-2xl py-3 rounded-xl transition shadow active:scale-95" data-val="9">9</button>
+
+          <button type="button" id="numpadClearBtn" class="bg-rose-950/60 hover:bg-rose-900 border border-rose-500/40 text-rose-300 font-title text-lg py-3 rounded-xl transition shadow active:scale-95 flex items-center justify-center" title="전체 지우기">C</button>
+          <button type="button" class="numpad-btn bg-slate-800 hover:bg-indigo-600/50 active:bg-cyan-600 border border-slate-700 hover:border-cyan-400 text-white font-title text-2xl py-3 rounded-xl transition shadow active:scale-95" data-val="0">0</button>
+          <button type="button" id="numpadBackspaceBtn" class="bg-slate-800 hover:bg-slate-700 border border-slate-600 text-amber-300 font-title text-lg py-3 rounded-xl transition shadow active:scale-95 flex items-center justify-center" title="한 글자 지우기">⌫</button>
+        </div>
+
+        <!-- 하단 제출 버튼 -->
+        <button 
+          type="button" 
+          id="submitAnswerBtn"
+          class="w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-title text-xl py-3.5 rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2 mt-1 font-bold">
+          <span>정답 확인하기 (Enter)</span>
+          <span>↵</span>
+        </button>
+      </div>
+
+      <!-- 오답 알림 배너 -->
+      <div id="wrongFeedbackBanner" class="hidden rounded-2xl p-3 mt-2 bg-rose-950/70 border-2 border-rose-500/60 animate-shake flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🤔</span>
+          <span class="text-xs md:text-sm font-bold text-rose-200" id="wrongFeedbackText">
+            다시 한 번 침착하게 자릿수를 계산해 보세요!
+          </span>
+        </div>
+        <button id="showSolutionModalBtn" class="text-xs text-rose-300 underline font-bold hover:text-white ml-2 whitespace-nowrap">
+          풀이 과정 보기 ➔
+        </button>
+      </div>
+
+    </section>
+
+    <!-- 3. 상세 풀이 해설 모달 (세로셈 받아올림/받아내림 & 암산 비법) -->
+    <div id="solutionModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 animate-popScale">
+      <div class="bg-slate-900 border-2 border-indigo-500/50 rounded-3xl p-6 md:p-8 max-w-lg w-full shadow-2xl text-center flex flex-col items-center">
+        
+        <div id="solutionIconBox" class="w-16 h-16 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-2xl flex items-center justify-center text-3xl mb-3 shadow-inner">
+          🎉
+        </div>
+
+        <span id="solutionResultBadge" class="bg-emerald-950 text-emerald-300 text-xs font-black px-3.5 py-1 rounded-full mb-1 border border-emerald-500/40">
+          정답입니다! 목표 달성 +1
+        </span>
+
+        <h3 class="font-title text-2xl md:text-3xl text-white mb-2" id="solutionTitleText">
+          정답: 852
+        </h3>
+
+        <!-- 문제 식 재확인 -->
+        <div class="w-full bg-slate-950 border border-indigo-500/30 rounded-2xl p-3 mb-3 text-cyan-300 font-mono font-bold text-lg" id="solutionFormula">
+          587 + 265 = 852
+        </div>
+
+        <!-- 탭 1: 세로셈 자릿수 해설 / 탭 2: 초등 암산 비법 -->
+        <div class="w-full bg-slate-800/80 border border-slate-700 rounded-2xl p-4 text-left mb-4 max-h-60 overflow-y-auto space-y-3">
+          <div>
+            <div class="text-xs font-bold text-amber-300 flex items-center gap-1 mb-1">
+              <span>📐</span> <span>세로셈 자릿수별 상세 풀이:</span>
+            </div>
+            <div id="verticalStepText" class="text-xs md:text-sm text-slate-300 leading-relaxed font-mono whitespace-pre-line pl-2 border-l-2 border-amber-400/40">
+              <!-- JS 동적 삽입 -->
+            </div>
+          </div>
+
+          <div class="pt-2 border-t border-slate-700">
+            <div class="text-xs font-bold text-cyan-300 flex items-center gap-1 mb-1">
+              <span>⚡</span> <span>초등 암산 고수의 빠른 비법:</span>
+            </div>
+            <p id="mentalSecretText" class="text-xs md:text-sm text-slate-300 leading-relaxed pl-2 border-l-2 border-cyan-400/40">
+              <!-- JS 동적 삽입 -->
+            </p>
+          </div>
+        </div>
+
+        <!-- 다음 문제 이동 버튼 -->
+        <button id="modalNextQuestionBtn" class="w-full bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-title text-xl py-3.5 rounded-2xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
+          <span id="modalNextBtnText">다음 문제로 가기</span>
+          <span>➔</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 4. 암산 꿀팁 가이드 모달 -->
+    <div id="tipsModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 animate-popScale">
+      <div class="bg-slate-900 border-2 border-amber-500/50 rounded-3xl p-6 md:p-8 max-w-lg w-full shadow-2xl text-left flex flex-col">
+        
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">💡</span>
+            <h3 class="font-title text-2xl text-amber-300">세 자리 수 암산 3대 비법</h3>
+          </div>
+          <button id="closeTipsBtn" class="text-slate-400 hover:text-white text-xl p-1 font-bold">✕</button>
+        </div>
+
+        <div class="space-y-3.5 text-xs md:text-sm text-slate-200 overflow-y-auto max-h-80 pr-1">
+          <!-- 비법 1 -->
+          <div class="bg-slate-800/80 p-3.5 rounded-2xl border border-indigo-500/30">
+            <h4 class="font-bold text-cyan-300 text-sm mb-1">1. 앞에서부터(백의 자리부터) 더하기!</h4>
+            <p class="text-slate-300 leading-relaxed">
+              종이 세로셈은 일의 자리부터 하지만, <strong>암산은 큰 자리(백의 자리)부터</strong> 계산하면 기억하기가 훨씬 쉬워요!<br>
+              <span class="text-amber-200 font-mono">예: 450 + 280 ➔ (400+200=600) ➔ (50+80=130) ➔ 730!</span>
+            </p>
+          </div>
+
+          <!-- 비법 2 -->
+          <div class="bg-slate-800/80 p-3.5 rounded-2xl border border-indigo-500/30">
+            <h4 class="font-bold text-emerald-300 text-sm mb-1">2. 뺄셈은 몇백으로 쪼개서 차례로 빼기!</h4>
+            <p class="text-slate-300 leading-relaxed">
+              빼는 수를 '백의 자리 ➔ 십의 자리 ➔ 일의 자리' 순서로 하나씩 깎아내려가세요.<br>
+              <span class="text-amber-200 font-mono">예: 624 - 280 ➔ (624-200=424) ➔ (424-80=344)!</span>
+            </p>
+          </div>
+
+          <!-- 비법 3 -->
+          <div class="bg-slate-800/80 p-3.5 rounded-2xl border border-indigo-500/30">
+            <h4 class="font-bold text-amber-300 text-sm mb-1">3. 10의 보수(친한 수) 빌려오기!</h4>
+            <p class="text-slate-300 leading-relaxed">
+              받아내림할 때는 윗자리에서 10을 빌려와서 빼는 수와의 차이를 먼저 구하면 빨라요!<br>
+              <span class="text-amber-200 font-mono">예: 13 - 8 ➔ (10 - 8 = 2)에 3을 더해서 바로 5!</span>
+            </p>
+          </div>
+        </div>
+
+        <button id="confirmTipsBtn" class="mt-5 w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-title text-lg py-3 rounded-2xl transition active:scale-95 text-center font-bold">
+          비법 확인 완료! 퀴즈 계속하기 👍
+        </button>
+      </div>
+    </div>
+
+    <!-- 5. 10문제 완성 대성공 화면 (Success Screen) -->
+    <section id="successScreen" class="hidden bg-slate-800/90 backdrop-blur-xl rounded-3xl p-6 md:p-8 shadow-2xl border-2 border-yellow-400/50 flex flex-col items-center text-center animate-popScale relative">
+      <canvas id="confettiCanvas" class="fixed inset-0 pointer-events-none z-50"></canvas>
+
+      <div class="w-24 h-24 bg-gradient-to-tr from-amber-400 via-yellow-400 to-orange-500 rounded-3xl flex items-center justify-center text-6xl mb-3 shadow-xl shadow-amber-500/30 animate-gentleBounce text-white">
+        🏆
+      </div>
+
+      <span class="bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 text-xs md:text-sm font-black px-4 py-1.5 rounded-full mb-2 shadow-sm">
+        미션 클리어! 10문제 암산 완전 정복!
+      </span>
+      <h2 class="font-title text-3xl md:text-4xl text-white mb-1">
+        번개 암산 마스터 등극! 👑
+      </h2>
+      <p class="text-slate-300 text-sm md:text-base max-w-md mb-6 leading-relaxed">
+        복잡한 세 자리 수 받아올림과 받아내림을 암산으로 정확히 풀어냈어요!<br>
+        놀라운 집중력과 수 감각을 증명했습니다! 🎖️
+      </p>
+
+      <!-- 성과 통계 카드 -->
+      <div class="grid grid-cols-3 gap-3 w-full max-w-md bg-slate-900/80 border border-indigo-500/30 rounded-2xl p-4 mb-6">
+        <div class="flex flex-col items-center">
+          <span class="text-xs text-slate-400 font-bold">맞힌 문제</span>
+          <span class="font-title text-2xl md:text-3xl text-emerald-400 mt-1">10 / 10 🎯</span>
+        </div>
+        <div class="flex flex-col items-center border-x border-slate-700">
+          <span class="text-xs text-slate-400 font-bold">총 소요 시간</span>
+          <span id="finalTotalTime" class="font-title text-2xl md:text-3xl text-cyan-400 mt-1">01:45</span>
+        </div>
+        <div class="flex flex-col items-center">
+          <span class="text-xs text-slate-400 font-bold">평균 풀이 속도</span>
+          <span id="finalAvgTime" class="font-title text-2xl md:text-3xl text-amber-300 mt-1">10.5초</span>
+        </div>
+      </div>
+
+      <!-- 액션 버튼 -->
+      <div class="flex flex-col sm:flex-row gap-3 w-full max-w-md">
+        <button id="restartChallengeBtn" class="flex-1 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-title text-lg py-3.5 rounded-2xl shadow-lg transition active:scale-95">
+          🎉 새로운 10문제 또 풀기!
+        </button>
+        <button id="toggleReportBtn" class="bg-slate-700 hover:bg-slate-600 text-slate-100 border border-slate-600 font-title text-lg py-3.5 px-4 rounded-2xl shadow transition active:scale-95">
+          📜 풀이 성적표 보기
+        </button>
+      </div>
+
+      <!-- 10문제 풀이 기록 성적표 -->
+      <div id="reportContainer" class="hidden w-full max-w-md text-left bg-slate-900/90 border border-indigo-500/30 rounded-2xl p-4 mt-4 max-h-60 overflow-y-auto">
+        <h4 class="font-bold text-xs text-slate-300 mb-2 border-b border-slate-800 pb-1.5 flex justify-between">
+          <span>나의 10문제 암산 풀이 기록</span>
+          <span class="text-emerald-400 font-black">10문제 통과 ✅</span>
+        </h4>
+        <div id="reportList" class="space-y-2 text-xs font-mono">
+          <!-- JS 렌더링 -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="w-full max-w-2xl text-center py-2 text-xs text-indigo-300/60 font-medium">
+    초등학교 4~6학년 대상 • 번개 암산 탐험대 10문제 연산 챌린지
+  </footer>
+
+  <script>
+    /* ==========================================================
+       1. Web Audio API 신디사이저 (효과음 & 팡파르)
+       ========================================================== */
+    class AudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playClick() {
+        if (!this.enabled || !this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(540, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(840, this.ctx.currentTime + 0.05);
+          gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+          gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.05);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.05);
+        } catch (e) {}
+      }
+
+      playCorrect() {
+        if (!this.enabled || !this.ctx) return;
+        try {
+          const notes = [523.25, 659.25, 783.99, 1046.50]; // 도-미-솔-높은도
+          notes.forEach((freq, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.06);
+            gain.gain.setValueAtTime(0.16, this.ctx.currentTime + idx * 0.06);
+            gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + idx * 0.06 + 0.22);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(this.ctx.currentTime + idx * 0.06);
+            osc.stop(this.ctx.currentTime + idx * 0.06 + 0.22);
+          });
+        } catch (e) {}
+      }
+
+      playWrong() {
+        if (!this.enabled || !this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(260, this.ctx.currentTime);
+          osc.frequency.linearRampToValueAtTime(140, this.ctx.currentTime + 0.28);
+          gain.gain.setValueAtTime(0.18, this.ctx.currentTime);
+          gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.28);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.28);
+        } catch (e) {}
+      }
+
+      playFanfare() {
+        if (!this.enabled || !this.ctx) return;
+        try {
+          const melody = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98];
+          melody.forEach((freq, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.11);
+            gain.gain.setValueAtTime(0.24, this.ctx.currentTime + idx * 0.11);
+            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + idx * 0.11 + 0.85);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(this.ctx.currentTime + idx * 0.11);
+            osc.stop(this.ctx.currentTime + idx * 0.11 + 0.85);
+          });
+        } catch (e) {}
+      }
+    }
+
+    const sound = new AudioEngine();
+
+    /* ==========================================================
+       2. Canvas 축하 콘페티(폭죽) 애니메이션
+       ========================================================== */
+    class ConfettiEffect {
+      constructor(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.particles = [];
+        this.animationId = null;
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+      }
+
+      resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+      }
+
+      start() {
+        this.particles = [];
+        const colors = ['#06B6D4', '#3B82F6', '#10B981', '#F59E0B', '#F43F5E', '#8B5CF6', '#FBBF24'];
+        for (let i = 0; i < 130; i++) {
+          this.particles.push({
+            x: this.canvas.width / 2,
+            y: this.canvas.height / 2,
+            vx: (Math.random() - 0.5) * 22,
+            vy: (Math.random() - 0.7) * 22,
+            size: Math.random() * 8 + 5,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            rotation: Math.random() * 360,
+            rSpeed: (Math.random() - 0.5) * 14,
+            gravity: 0.35,
+            opacity: 1
+          });
+        }
+        if (!this.animationId) this.animate();
+      }
+
+      animate() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.particles.forEach((p, idx) => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += p.gravity;
+          p.rotation += p.rSpeed;
+          p.opacity -= 0.007;
+
+          this.ctx.save();
+          this.ctx.globalAlpha = Math.max(0, p.opacity);
+          this.ctx.translate(p.x, p.y);
+          this.ctx.rotate((p.rotation * Math.PI) / 180);
+          this.ctx.fillStyle = p.color;
+          this.ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+          this.ctx.restore();
+
+          if (p.opacity <= 0 || p.y > this.canvas.height) {
+            this.particles.splice(idx, 1);
+          }
+        });
+
+        if (this.particles.length > 0) {
+          this.animationId = requestAnimationFrame(() => this.animate());
+        } else {
+          cancelAnimationFrame(this.animationId);
+          this.animationId = null;
+          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        }
+      }
+    }
+
+    /* ==========================================================
+       3. 무작위 세 자리 수 덧셈/뺄셈 생성기 (받아올림/받아내림 보장)
+       ========================================================== */
+    function generateAdditionProblem() {
+      // 100 ~ 899 사이 두 수 생성 중 받아올림(일의 자리 또는 십의 자리) 보장
+      while (true) {
+        const a = Math.floor(Math.random() * 750) + 120;
+        const b = Math.floor(Math.random() * 750) + 120;
+
+        const a0 = a % 10;
+        const b0 = b % 10;
+        const a1 = Math.floor(a / 10) % 10;
+        const b1 = Math.floor(b / 10) % 10;
+        const a2 = Math.floor(a / 100);
+        const b2 = Math.floor(b / 100);
+
+        const carry0 = (a0 + b0 >= 10);
+        const carry1 = (a1 + b1 + (carry0 ? 1 : 0) >= 10);
+
+        // 일의 자리나 십의 자리에서 반드시 받아올림 발생
+        if (carry0 || carry1) {
+          const ans = a + b;
+          let carryDesc = [];
+          if (carry0 && carry1) carryDesc.push("일의 자리 & 십의 자리 모두 받아올림");
+          else if (carry0) carryDesc.push("일의 자리 받아올림");
+          else carryDesc.push("십의 자리 받아올림");
+
+          // 상세 세로셈 풀이 작성
+          const s0 = (a0 + b0) % 10;
+          const s1 = (a1 + b1 + (carry0 ? 1 : 0)) % 10;
+          const s2 = a2 + b2 + (carry1 ? 1 : 0);
+
+          let vertical = `1) 일의 자리: ${a0} + ${b0} = ${a0 + b0}`;
+          if (carry0) vertical += ` ➔ 십의 자리로 1 올림하고 일의 자리는 '${s0}'`;
+          else vertical += ` ➔ 일의 자리는 '${s0}'`;
+
+          vertical += `\n2) 십의 자리: ${a1} + ${b1}${carry0 ? ' + 1(올림)' : ''} = ${a1 + b1 + (carry0 ? 1 : 0)}`;
+          if (carry1) vertical += ` ➔ 백의 자리로 1 올림하고 십의 자리는 '${s1}'`;
+          else vertical += ` ➔ 십의 자리는 '${s1}'`;
+
+          vertical += `\n3) 백의 자리: ${a2} + ${b2}${carry1 ? ' + 1(올림)' : ''} = ${s2}`;
+          vertical += `\n➔ 최종 정답: ${ans}`;
+
+          // 암산 비법 팁
+          const mental = `백의 자리(${a2 * 100} + ${b2 * 100} = ${(a2 + b2) * 100})을 먼저 더해두고, 십의 자리(${a1 * 10} + ${b1 * 10})와 일의 자리를 순서대로 머릿속에 더해보세요!`;
+
+          return {
+            type: 'add',
+            operator: '+',
+            a,
+            b,
+            ans,
+            badge: '➕ 받아올림 덧셈',
+            badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30',
+            carryingText: carryDesc.join(', '),
+            clueTip: `${a2 * 100} + ${b2 * 100} = ${(a2 + b2) * 100}을 먼저 기억하고 십의 자리(${a1 * 10 + b1 * 10})를 더해보세요!`,
+            verticalText: vertical,
+            mentalText: mental
+          };
+        }
+      }
+    }
+
+    function generateSubtractionProblem() {
+      // 결과가 양수이면서 일의 자리 또는 십의 자리 받아내림 보장
+      while (true) {
+        const a = Math.floor(Math.random() * 750) + 240; // 240 ~ 989
+        const b = Math.floor(Math.random() * (a - 120)) + 110; // b < a
+
+        const a0 = a % 10;
+        const b0 = b % 10;
+        const a1 = Math.floor(a / 10) % 10;
+        const b1 = Math.floor(b / 10) % 10;
+        const a2 = Math.floor(a / 100);
+        const b2 = Math.floor(b / 100);
+
+        const borrow0 = (a0 < b0);
+        const borrow1 = (a1 - (borrow0 ? 1 : 0) < b1);
+
+        // 받아내림이 1회 이상 있고 결과가 두 자리 이상
+        if ((borrow0 || borrow1) && (a - b >= 10)) {
+          const ans = a - b;
+          let borrowDesc = [];
+          if (borrow0 && borrow1) borrowDesc.push("일의 자리 & 십의 자리 모두 받아내림");
+          else if (borrow0) borrowDesc.push("일의 자리 받아내림");
+          else borrowDesc.push("십의 자리 받아내림");
+
+          // 상세 세로셈 풀이 작성
+          let vertical = '';
+          if (borrow0) {
+            vertical += `1) 일의 자리: ${a0}에서 ${b0}를 뺄 수 없으므로 십의 자리에서 10을 받아내림 ➔ (10 + ${a0}) - ${b0} = ${10 + a0 - b0}\n`;
+          } else {
+            vertical += `1) 일의 자리: ${a0} - ${b0} = ${a0 - b0}\n`;
+          }
+
+          const currentA1 = a1 - (borrow0 ? 1 : 0);
+          if (borrow1) {
+            vertical += `2) 십의 자리: 남은 ${currentA1}에서 ${b1}을 뺄 수 없으므로 백의 자리에서 100을 받아내림 ➔ (10 + ${currentA1}) - ${b1} = ${10 + currentA1 - b1}\n`;
+          } else {
+            vertical += `2) 십의 자리: 남은 ${currentA1} - ${b1} = ${currentA1 - b1}\n`;
+          }
+
+          const currentA2 = a2 - (borrow1 ? 1 : 0);
+          vertical += `3) 백의 자리: 남은 ${currentA2} - ${b2} = ${currentA2 - b2}\n`;
+          vertical += `➔ 최종 정답: ${ans}`;
+
+          // 암산 비법 팁
+          const mental = `${a}에서 먼저 백의 자리인 ${b2 * 100}을 빼서 ${a - b2 * 100}을 만들고, 그 다음 십의 자리(${b1 * 10})와 일의 자리를 차례로 깎아 내려가세요!`;
+
+          return {
+            type: 'sub',
+            operator: '-',
+            a,
+            b,
+            ans,
+            badge: '➖ 받아내림 뺄셈',
+            badgeClass: 'bg-cyan-500/20 text-cyan-300 border-cyan-400/30',
+            carryingText: borrowDesc.join(', '),
+            clueTip: `${a}에서 먼저 ${b2 * 100}을 빼면 ${a - b2 * 100}! 그다음 ${b1 * 10}과 ${b0}를 차례로 빼보세요.`,
+            verticalText: vertical,
+            mentalText: mental
+          };
+        }
+      }
+    }
+
+    /* ==========================================================
+       4. 게임 상태 관리 객체
+       ========================================================== */
+    const TARGET_QUESTIONS = 10;
+
+    const GameState = {
+      avatar: '⚡',
+      score: 0,               // 맞힌 문제 수 (최대 10)
+      currentProblem: null,
+      currentInput: '',       // 유저가 입력 중인 문자열
+      startTime: null,        // 전체 시작 시각
+      questionStartTime: null,// 현재 문제 시작 시각
+      totalTimerInterval: null,
+      questionTimerInterval: null,
+      records: [],            // 10문제 풀이 기록
+      isLocked: false
+    };
+
+    // DOM 요소 캐시
+    const startScreen = document.getElementById('startScreen');
+    const quizScreen = document.getElementById('quizScreen');
+    const successScreen = document.getElementById('successScreen');
+    const solutionModal = document.getElementById('solutionModal');
+    const tipsModal = document.getElementById('tipsModal');
+
+    const soundToggleBtn = document.getElementById('soundToggleBtn');
+    const soundIcon = document.getElementById('soundIcon');
+    const headerScoreBadge = document.getElementById('headerScoreBadge');
+    const headerTipBtn = document.getElementById('headerTipBtn');
+
+    const startChallengeBtn = document.getElementById('startChallengeBtn');
+    const playerAvatar = document.getElementById('playerAvatar');
+    const currentScoreNum = document.getElementById('currentScoreNum');
+    const questionTimerText = document.getElementById('questionTimerText');
+    const totalTimerText = document.getElementById('totalTimerText');
+    const quizProgressBar = document.getElementById('quizProgressBar');
+    const scoreNodesContainer = document.getElementById('scoreNodesContainer');
+
+    const operationBadge = document.getElementById('operationBadge');
+    const carryingInfoBadge = document.getElementById('carryingInfoBadge');
+    const numA = document.getElementById('numA');
+    const operatorSign = document.getElementById('operatorSign');
+    const numB = document.getElementById('numB');
+    const displayAnswer = document.getElementById('displayAnswer');
+
+    const showClueTipBtn = document.getElementById('showClueTipBtn');
+    const clueTipBox = document.getElementById('clueTipBox');
+    const clueTipText = document.getElementById('clueTipText');
+
+    const numpadClearBtn = document.getElementById('numpadClearBtn');
+    const numpadBackspaceBtn = document.getElementById('numpadBackspaceBtn');
+    const submitAnswerBtn = document.getElementById('submitAnswerBtn');
+
+    const wrongFeedbackBanner = document.getElementById('wrongFeedbackBanner');
+    const wrongFeedbackText = document.getElementById('wrongFeedbackText');
+    const showSolutionModalBtn = document.getElementById('showSolutionModalBtn');
+
+    // 해설 모달 캐시
+    const solutionIconBox = document.getElementById('solutionIconBox');
+    const solutionResultBadge = document.getElementById('solutionResultBadge');
+    const solutionTitleText = document.getElementById('solutionTitleText');
+    const solutionFormula = document.getElementById('solutionFormula');
+    const verticalStepText = document.getElementById('verticalStepText');
+    const mentalSecretText = document.getElementById('mentalSecretText');
+    const modalNextQuestionBtn = document.getElementById('modalNextQuestionBtn');
+    const modalNextBtnText = document.getElementById('modalNextBtnText');
+
+    // 팁 모달 캐시
+    const closeTipsBtn = document.getElementById('closeTipsBtn');
+    const confirmTipsBtn = document.getElementById('confirmTipsBtn');
+
+    // 최종 성공 화면 캐시
+    const confettiCanvas = document.getElementById('confettiCanvas');
+    const confetti = new ConfettiEffect(confettiCanvas);
+    const finalTotalTime = document.getElementById('finalTotalTime');
+    const finalAvgTime = document.getElementById('finalAvgTime');
+    const restartChallengeBtn = document.getElementById('restartChallengeBtn');
+    const toggleReportBtn = document.getElementById('toggleReportBtn');
+    const reportContainer = document.getElementById('reportContainer');
+    const reportList = document.getElementById('reportList');
+
+    /* ==========================================================
+       5. 10단계 인디케이터 및 프로그레스 갱신
+       ========================================================== */
+    function initScoreNodes() {
+      scoreNodesContainer.innerHTML = '';
+      for (let i = 1; i <= TARGET_QUESTIONS; i++) {
+        const node = document.createElement('div');
+        node.id = `scoreNode_${i}`;
+        node.className = `flex flex-col items-center justify-center py-1 rounded-xl border transition-all text-xs font-black ${
+          i <= GameState.score 
+            ? 'bg-emerald-500 border-emerald-400 text-slate-950 shadow-md scale-105' 
+            : 'bg-slate-800 border-slate-700 text-slate-500'
+        }`;
+        node.innerHTML = `
+          <span class="text-xs md:text-sm">${i <= GameState.score ? '⭐' : '⚪'}</span>
+          <span class="text-[9px] md:text-[10px] mt-0.5">${i}</span>
+        `;
+        scoreNodesContainer.appendChild(node);
+      }
+    }
+
+    function updateProgressUI() {
+      currentScoreNum.textContent = GameState.score;
+      headerScoreBadge.textContent = `${GameState.score} / ${TARGET_QUESTIONS}`;
+
+      const percent = (GameState.score / TARGET_QUESTIONS) * 100;
+      quizProgressBar.style.width = `${percent}%`;
+
+      for (let i = 1; i <= TARGET_QUESTIONS; i++) {
+        const node = document.getElementById(`scoreNode_${i}`);
+        if (!node) continue;
+        if (i <= GameState.score) {
+          node.className = 'flex flex-col items-center justify-center py-1 rounded-xl border border-emerald-400 bg-emerald-500 text-slate-950 shadow-md scale-105 transition-all';
+          node.innerHTML = `<span class="text-xs md:text-sm">⭐</span><span class="text-[9px] md:text-[10px] mt-0.5 font-bold">${i}</span>`;
+        } else {
+          node.className = 'flex flex-col items-center justify-center py-1 rounded-xl border border-slate-700 bg-slate-800 text-slate-500 transition-all';
+          node.innerHTML = `<span class="text-xs md:text-sm">⚪</span><span class="text-[9px] md:text-[10px] mt-0.5">${i}</span>`;
+        }
+      }
+    }
+
+    /* 타이머 시작 및 갱신 */
+    function startTimers() {
+      if (GameState.totalTimerInterval) clearInterval(GameState.totalTimerInterval);
+      if (GameState.questionTimerInterval) clearInterval(GameState.questionTimerInterval);
+
+      GameState.startTime = Date.now();
+      GameState.questionStartTime = Date.now();
+
+      // 전체 누적 타이머
+      GameState.totalTimerInterval = setInterval(() => {
+        const elapsedSec = Math.floor((Date.now() - GameState.startTime) / 1000);
+        const mins = String(Math.floor(elapsedSec / 60)).padStart(2, '0');
+        const secs = String(elapsedSec % 60).padStart(2, '0');
+        totalTimerText.textContent = `${mins}:${secs}`;
+      }, 500);
+
+      // 문제별 타이머
+      GameState.questionTimerInterval = setInterval(() => {
+        const diff = (Date.now() - GameState.questionStartTime) / 1000;
+        questionTimerText.textContent = `${diff.toFixed(1)}초`;
+      }, 100);
+    }
+
+    function resetQuestionTimer() {
+      GameState.questionStartTime = Date.now();
+    }
+
+    /* ==========================================================
+       6. 문제 출제 및 정답 채점 로직
+       ========================================================== */
+    function loadNewProblem() {
+      GameState.isLocked = false;
+      GameState.currentInput = '';
+      updateDisplayAnswer();
+      wrongFeedbackBanner.classList.add('hidden');
+      clueTipBox.classList.add('hidden');
+
+      resetQuestionTimer();
+
+      // 덧셈과 뺄셈 무작위 50:50 비율로 번갈아 출제
+      const isAddition = Math.random() < 0.5;
+      GameState.currentProblem = isAddition ? generateAdditionProblem() : generateSubtractionProblem();
+      const p = GameState.currentProblem;
+
+      operationBadge.textContent = p.badge;
+      operationBadge.className = `text-xs font-extrabold px-3 py-1 rounded-full border flex items-center gap-1 ${p.badgeClass}`;
+      carryingInfoBadge.textContent = p.carryingText;
+
+      numA.textContent = p.a;
+      operatorSign.textContent = p.operator;
+      numB.textContent = p.b;
+      clueTipText.textContent = p.clueTip;
+
+      updateProgressUI();
+    }
+
+    function updateDisplayAnswer() {
+      if (GameState.currentInput === '') {
+        displayAnswer.textContent = '?';
+        displayAnswer.className = 'text-slate-400 font-bold';
+      } else {
+        displayAnswer.textContent = GameState.currentInput;
+        displayAnswer.className = 'text-emerald-400 font-extrabold tracking-wider';
+      }
+    }
+
+    function handleNumberInput(digit) {
+      if (GameState.isLocked) return;
+      if (GameState.currentInput.length >= 5) return; // 세 자리 연산 답은 최대 4자리
+      GameState.currentInput += digit;
+      updateDisplayAnswer();
+      sound.playClick();
+    }
+
+    function handleBackspace() {
+      if (GameState.isLocked) return;
+      if (GameState.currentInput.length > 0) {
+        GameState.currentInput = GameState.currentInput.slice(0, -1);
+        updateDisplayAnswer();
+        sound.playClick();
+      }
+    }
+
+    function handleClear() {
+      if (GameState.isLocked) return;
+      GameState.currentInput = '';
+      updateDisplayAnswer();
+      sound.playClick();
+    }
+
+    /* 정답 제출 처리 */
+    function checkAnswer() {
+      if (GameState.isLocked) return;
+      if (!GameState.currentInput) {
+        sound.playWrong();
+        wrongFeedbackText.textContent = "숫자를 먼저 입력해 주세요!";
+        wrongFeedbackBanner.classList.remove('hidden');
+        return;
+      }
+
+      const userVal = parseInt(GameState.currentInput, 10);
+      const p = GameState.currentProblem;
+      const qDuration = ((Date.now() - GameState.questionStartTime) / 1000).toFixed(1);
+
+      if (userVal === p.ans) {
+        // 정답!
+        GameState.isLocked = true;
+        sound.playCorrect();
+        wrongFeedbackBanner.classList.add('hidden');
+
+        GameState.score++;
+        updateProgressUI();
+
+        // 풀이 기록 저장
+        GameState.records.push({
+          index: GameState.score,
+          formula: `${p.a} ${p.operator} ${p.b}`,
+          userAns: userVal,
+          correctAns: p.ans,
+          time: qDuration,
+          isCorrect: true
+        });
+
+        const isWin = GameState.score >= TARGET_QUESTIONS;
+        showSolutionModal(true, isWin);
+
+      } else {
+        // 오답 처리
+        sound.playWrong();
+        wrongFeedbackText.textContent = `입력한 답 '${userVal}'은(는) 정답이 아니에요. 자릿수 올림/내림을 확인해 보세요!`;
+        wrongFeedbackBanner.classList.remove('hidden');
+      }
+    }
+
+    /* ==========================================================
+       7. 상세 풀이 모달 및 최종 성적표 화면
+       ========================================================== */
+    function showSolutionModal(isCorrect, isFinalWin) {
+      const p = GameState.currentProblem;
+
+      if (isCorrect) {
+        solutionIconBox.textContent = '🎉';
+        solutionIconBox.className = 'w-16 h-16 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-2xl flex items-center justify-center text-3xl mb-3 shadow-inner';
+        solutionResultBadge.textContent = `딩동댕! 정답 통과 (${GameState.score} / ${TARGET_QUESTIONS})`;
+        solutionResultBadge.className = 'bg-emerald-950 text-emerald-300 text-xs font-black px-3.5 py-1 rounded-full mb-1 border border-emerald-500/40';
+      } else {
+        solutionIconBox.textContent = '📖';
+        solutionIconBox.className = 'w-16 h-16 bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-2xl flex items-center justify-center text-3xl mb-3 shadow-inner';
+        solutionResultBadge.textContent = '상세 풀이 확인 및 학습';
+        solutionResultBadge.className = 'bg-amber-950 text-amber-300 text-xs font-black px-3.5 py-1 rounded-full mb-1 border border-amber-500/40';
+      }
+
+      solutionTitleText.textContent = `정답: ${p.ans}`;
+      solutionFormula.textContent = `${p.a} ${p.operator} ${p.b} = ${p.ans}`;
+      verticalStepText.textContent = p.verticalText;
+      mentalSecretText.textContent = p.mentalText;
+
+      if (isFinalWin) {
+        modalNextBtnText.textContent = '🏆 10문제 달성 성공 축하 보기!';
+      } else {
+        modalNextBtnText.textContent = '다음 암산 문제로 가기';
+      }
+
+      solutionModal.classList.remove('hidden');
+    }
+
+    /* 10문제 최종 완수 성공 화면 */
+    function showSuccessScreen() {
+      clearInterval(GameState.totalTimerInterval);
+      clearInterval(GameState.questionTimerInterval);
+
+      sound.playFanfare();
+      confetti.start();
+
+      quizScreen.classList.add('hidden');
+      solutionModal.classList.add('hidden');
+      successScreen.classList.remove('hidden');
+
+      // 총 소요 시간
+      const elapsedSec = Math.floor((Date.now() - GameState.startTime) / 1000);
+      const mins = String(Math.floor(elapsedSec / 60)).padStart(2, '0');
+      const secs = String(elapsedSec % 60).padStart(2, '0');
+      finalTotalTime.textContent = `${mins}:${secs}`;
+
+      // 평균 풀이 시간 계산
+      const totalRecorded = GameState.records.reduce((acc, cur) => acc + parseFloat(cur.time), 0);
+      const avg = (totalRecorded / (GameState.records.length || 1)).toFixed(1);
+      finalAvgTime.textContent = `${avg}초`;
+
+      // 10문제 성적표 렌더링
+      reportList.innerHTML = '';
+      GameState.records.forEach(rec => {
+        const item = document.createElement('div');
+        item.className = 'p-2.5 rounded-xl bg-slate-950/80 border border-indigo-500/30 flex items-center justify-between';
+        item.innerHTML = `
+          <div>
+            <span class="text-cyan-400 font-bold">${rec.index}.</span>
+            <span class="text-white ml-1.5 font-bold">${rec.formula} = <span class="text-emerald-400">${rec.correctAns}</span></span>
+          </div>
+          <div class="flex items-center gap-2 text-[11px] text-slate-400">
+            <span>⏱️ ${rec.time}초</span>
+            <span class="text-emerald-400 font-bold">정답 ✅</span>
+          </div>
+        `;
+        reportList.appendChild(item);
+      });
+    }
+
+    /* ==========================================================
+       8. 이벤트 리스너 바인딩 (키패드, 키보드, 모달)
+       ========================================================== */
+
+    // 소리 켜기/끄기
+    soundToggleBtn.addEventListener('click', () => {
+      sound.init();
+      sound.enabled = !sound.enabled;
+      soundIcon.textContent = sound.enabled ? '🔊' : '🔇';
+      soundToggleBtn.classList.toggle('opacity-50', !sound.enabled);
+    });
+
+    // 캐릭터 아바타 선택
+    document.querySelectorAll('.avatar-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        sound.init();
+        sound.playClick();
+        document.querySelectorAll('.avatar-btn').forEach(b => {
+          b.classList.remove('border-cyan-400', 'bg-cyan-950/60', 'shadow-md');
+          b.classList.add('border-slate-700', 'bg-slate-900/60');
+        });
+        btn.classList.remove('border-slate-700', 'bg-slate-900/60');
+        btn.classList.add('border-cyan-400', 'bg-cyan-950/60', 'shadow-md');
+        GameState.avatar = btn.getAttribute('data-avatar');
+      });
+    });
+
+    // 힌트 팁 토글
+    showClueTipBtn.addEventListener('click', () => {
+      sound.playClick();
+      clueTipBox.classList.toggle('hidden');
+    });
+
+    // 암산 비법 모달 열기/닫기
+    headerTipBtn.addEventListener('click', () => {
+      sound.playClick();
+      tipsModal.classList.remove('hidden');
+    });
+    closeTipsBtn.addEventListener('click', () => {
+      sound.playClick();
+      tipsModal.classList.add('hidden');
+    });
+    confirmTipsBtn.addEventListener('click', () => {
+      sound.playClick();
+      tipsModal.classList.add('hidden');
+    });
+
+    // 가상 키패드 숫자 버튼들
+    document.querySelectorAll('.numpad-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        sound.init();
+        handleNumberInput(btn.getAttribute('data-val'));
+      });
+    });
+
+    // 가상 키패드 지우기 버튼들
+    numpadBackspaceBtn.addEventListener('click', () => {
+      sound.init();
+      handleBackspace();
+    });
+    numpadClearBtn.addEventListener('click', () => {
+      sound.init();
+      handleClear();
+    });
+
+    // 제출 버튼
+    submitAnswerBtn.addEventListener('click', () => {
+      sound.init();
+      checkAnswer();
+    });
+
+    // 오답 시 강제 풀이 보기 버튼
+    showSolutionModalBtn.addEventListener('click', () => {
+      sound.playClick();
+      showSolutionModal(false, false);
+    });
+
+    // 해설 모달 다음 문제 버튼
+    modalNextQuestionBtn.addEventListener('click', () => {
+      sound.playClick();
+      solutionModal.classList.add('hidden');
+
+      if (GameState.score >= TARGET_QUESTIONS) {
+        showSuccessScreen();
+      } else {
+        loadNewProblem();
+      }
+    });
+
+    // 챌린지 시작 버튼
+    startChallengeBtn.addEventListener('click', () => {
+      sound.init();
+      sound.playClick();
+
+      GameState.score = 0;
+      GameState.records = [];
+      playerAvatar.textContent = GameState.avatar;
+
+      initScoreNodes();
+      startScreen.classList.add('hidden');
+      successScreen.classList.add('hidden');
+      quizScreen.classList.remove('hidden');
+
+      startTimers();
+      loadNewProblem();
+    });
+
+    // 새로운 10문제 재도전
+    restartChallengeBtn.addEventListener('click', () => {
+      sound.playClick();
+      successScreen.classList.add('hidden');
+
+      GameState.score = 0;
+      GameState.records = [];
+
+      initScoreNodes();
+      updateProgressUI();
+      quizScreen.classList.remove('hidden');
+
+      startTimers();
+      loadNewProblem();
+    });
+
+    // 성적표 토글 버튼
+    toggleReportBtn.addEventListener('click', () => {
+      sound.playClick();
+      reportContainer.classList.toggle('hidden');
+    });
+
+    // 물리적 키보드 연동 (숫자키, 백스페이스, 엔터)
+    window.addEventListener('keydown', (e) => {
+      if (quizScreen.classList.contains('hidden')) return;
+
+      if (e.key >= '0' && e.key <= '9') {
+        sound.init();
+        handleNumberInput(e.key);
+      } else if (e.key === 'Backspace') {
+        sound.init();
+        handleBackspace();
+      } else if (e.key === 'Enter') {
+        sound.init();
+        // 모달이 열려 있는 상태면 다음 버튼 실행
+        if (!solutionModal.classList.contains('hidden')) {
+          modalNextQuestionBtn.click();
+        } else {
+          checkAnswer();
+        }
+      } else if (e.key === 'Escape') {
+        tipsModal.classList.add('hidden');
+      }
+    });
+
+  </script>
+</body>
+</html>
